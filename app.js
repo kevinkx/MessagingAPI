@@ -247,7 +247,7 @@ app.get("/user/message/:userID",(req,res) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
 		console.log(req.params)
-		let query = "SELECT conversations.id, username, message, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
+		let query = "SELECT conversations.id, username, message, date, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
         connection.query(query, (err, rows) => {
             connection.release(); // return the connection to pool
             if(err) throw err;

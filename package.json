@@ -1,0 +1,20 @@
+{
+  "name": "MessagingAPI",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000M\u0000e\u0000s\u0000s\u0000a\u0000g\u0000i\u0000n\u0000g\u0000A\u0000P\u0000I\u0000\r\u0000 \u0000",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevinkx/MessagingAPI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kevinkx/MessagingAPI/issues"
+  },
+  "homepage": "https://github.com/kevinkx/MessagingAPI#readme"
+}
