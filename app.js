@@ -68,5 +68,43 @@ app.post("/user/create/",(req,res) => {
     });		
 });
 
+app.get("/message/:conversationID",(req,res) => {
+    pool.getConnection((err, connection) => {
+        if(err) throw err;
+        console.log('connected as id ' + connection.threadId);
+		console.log(req.params)
+		let query = "SELECT username, message, date from users JOIN messages ON users.id = messages.user_id WHERE conversation_id = "+req.params.conversationID;
+        connection.query(query, (err, rows) => {
+            connection.release(); // return the connection to pool
+            if(err) throw err;
+            console.log('The data from users table are: \n', rows);
+			if(rows.length === 0){
+				res.send({error: 'data not found'});
+			}else{
+				res.send(rows);
+			}
+        });
+    });			
+});
+
+app.get("/user/message/:userID",(req,res) => {
+    pool.getConnection((err, connection) => {
+        if(err) throw err;
+        console.log('connected as id ' + connection.threadId);
+		console.log(req.params)
+		let query = "SELECT username, message, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
+        connection.query(query, (err, rows) => {
+            connection.release(); // return the connection to pool
+            if(err) throw err;
+            console.log('The data from users table are: \n', rows);
+			if(rows.length === 0){
+				res.send({error: 'data not found'});
+			}else{
+				res.send(rows);
+			}
+        });
+    });			
+});
+
 app.listen(3000);
 console.log('Server started 127.0.0.1:3000');
