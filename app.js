@@ -34,7 +34,7 @@ app.get("/user/:userId",(req,res) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
 		console.log(req.params)
-		let query = "SELECT * from users WHERE id = "+ req.params.userId;
+		let query = "SELECT * from users WHERE id = "+ req.params.userid;
         connection.query(query, (err, rows) => {
             connection.release(); // return the connection to pool
             if(err) throw err;
@@ -65,6 +65,22 @@ app.post("/user/create/",(req,res) => {
         // rows added
 		res.send({id:response.insertId});
         console.log(response.insertId);
+    });		
+});
+
+app.post("/conversation/read/",(req,res) => {
+	console.log(req.body)
+    let insertQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ? AND ?? = ?';
+    let query = mysql.format(insertQuery,["conversation_detail","unread_count",0,"conversation_id",req.body.conversationid,"user_id",req.body.userid]);
+    pool.query(query,(err, response) => {
+        if(err) {
+            console.error(err);
+			res.send({error: err});
+            return;
+        }
+        // rows updated
+		res.send({conversation_id:req.body.conversationid, user_id:req.body.userid, result:"message successfully read"});
+        console.log({conversation_id:req.body.conversationid, user_id:req.body.userid, result:"message successfully read"});
     });		
 });
 
