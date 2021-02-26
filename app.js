@@ -98,6 +98,7 @@ app.post("/message/send/", (req,res) => {
             if(err) throw err;
             console.log('The data from users table are: \n', rows);
 			if(rows.length === 0){
+				var conversationId
 				//if new, create new conversation data.
 				let insertQuery =  'INSERT INTO ?? (??,??,??) VALUES (?,?,?)';
 				let query =  mysql.format(insertQuery,["conversations","user_id_1","user_id_2","last_message_id",req.body.senderid,req.body.receiverid,0]);
@@ -109,6 +110,7 @@ app.post("/message/send/", (req,res) => {
 					}
 					// rows inserted
 					console.log(response);
+					conversationId = response.insertId;
 					insertQuery =  'INSERT INTO ?? (??,??,??,??) VALUES (?,?,?,?),(?,?,?,?)';
 					query =  mysql.format(insertQuery,["conversation_detail","conversation_id","user_id","chat_user_id","unread_count",response.insertId,req.body.senderid,req.body.receiverid,0,conversationId,req.body.receiverid,req.body.senderid,0]);
 					pool.query(query,(err, response) => {
@@ -119,42 +121,78 @@ app.post("/message/send/", (req,res) => {
 						}
 						// rows inserted
 						console.log(response);
-					});	
-					});
-			}
-			//insert the message
-			let insertQuery = 'INSERT INTO ?? (??,??,??) VALUES (?,?,?)';
-			let query = mysql.format(insertQuery,["messages","user_id","conversation_id","message",req.body.senderid,rows[0].id,req.body.message]);
-			 pool.query(query,(err, response) => {
-				if(err) {
-					console.error(err);
-					res.send({error: err});
-					return;
-				}
-				// rows inserted
-				//update last message
-				let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ?';
-				let query = mysql.format(updateQuery,["conversations","last_message_id",response.insertId,"id",rows[0].id]);
-				pool.query(query,(err, response) => {
-					if(err) {
-						console.error(err);
-						res.send({error: err});
-						return;
-					}
-						// rows updated
-						//increment unread count to the receiver
-						let updateQuery = 'UPDATE ?? SET ?? = ?? + ? WHERE ?? = ? AND ?? = ?';
-						let query = mysql.format(updateQuery,["conversation_detail","unread_count","unread_count", 1,"conversation_id",rows[0].id,"user_id",req.body.receiverid]);
-						pool.query(query,(err, response) => {
+						//insert the message
+						let insertQuery = 'INSERT INTO ?? (??,??,??) VALUES (?,?,?)';
+						let query = mysql.format(insertQuery,["messages","user_id","conversation_id","message",req.body.senderid,conversationId,req.body.message]);
+						 pool.query(query,(err, response) => {
 							if(err) {
 								console.error(err);
 								res.send({error: err});
 								return;
 							}
+							// rows inserted
+							//update last message
+							let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ?';
+							let query = mysql.format(updateQuery,["conversations","last_message_id",response.insertId,"id",conversationId]);
+							pool.query(query,(err, response) => {
+								if(err) {
+									console.error(err);
+									res.send({error: err});
+									return;
+								}
+									// rows updated
+									//increment unread count to the receiver
+									let updateQuery = 'UPDATE ?? SET ?? = ?? + ? WHERE ?? = ? AND ?? = ?';
+									let query = mysql.format(updateQuery,["conversation_detail","unread_count","unread_count", 1,"conversation_id",conversationId,"user_id",req.body.receiverid]);
+									pool.query(query,(err, response) => {
+										if(err) {
+											console.error(err);
+											res.send({error: err});
+											return;
+										}
+										// rows updated
+										//remove all unread count in the sender
+										let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ? AND ?? = ?';
+										let query = mysql.format(updateQuery,["conversation_detail","unread_count",0,"conversation_id",conversationId,"user_id",req.body.senderid]);
+										pool.query(query,(err, response) => {
+											if(err) {
+												console.error(err);
+												res.send({error: err});
+												return;
+											}
+											// rows updated
+											res.send({conversation_id:conversationId, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
+											console.log({conversation_id:conversationId, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
+										});		
+									});	
+							});	
+						});	
+					});	
+					});
+			}else{
+				//insert the message
+				let insertQuery = 'INSERT INTO ?? (??,??,??) VALUES (?,?,?)';
+				let query = mysql.format(insertQuery,["messages","user_id","conversation_id","message",req.body.senderid,rows[0].id,req.body.message]);
+				 pool.query(query,(err, response) => {
+					if(err) {
+						console.error(err);
+						res.send({error: err});
+						return;
+					}
+					// rows inserted
+					//update last message
+					let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ?';
+					let query = mysql.format(updateQuery,["conversations","last_message_id",response.insertId,"id",rows[0].id]);
+					pool.query(query,(err, response) => {
+						if(err) {
+							console.error(err);
+							res.send({error: err});
+							return;
+						}
 							// rows updated
-							//remove all unread count in the sender
-							let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ? AND ?? = ?';
-							let query = mysql.format(updateQuery,["conversation_detail","unread_count",0,"conversation_id",rows[0].id,"user_id",req.body.senderid]);
+							//increment unread count to the receiver
+							let updateQuery = 'UPDATE ?? SET ?? = ?? + ? WHERE ?? = ? AND ?? = ?';
+							let query = mysql.format(updateQuery,["conversation_detail","unread_count","unread_count", 1,"conversation_id",rows[0].id,"user_id",req.body.receiverid]);
 							pool.query(query,(err, response) => {
 								if(err) {
 									console.error(err);
@@ -162,12 +200,24 @@ app.post("/message/send/", (req,res) => {
 									return;
 								}
 								// rows updated
-								res.send({conversation_id:rows[0].id, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
-								console.log({conversation_id:rows[0].id, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
-							});		
-						});	
+								//remove all unread count in the sender
+								let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ? AND ?? = ?';
+								let query = mysql.format(updateQuery,["conversation_detail","unread_count",0,"conversation_id",rows[0].id,"user_id",req.body.senderid]);
+								pool.query(query,(err, response) => {
+									if(err) {
+										console.error(err);
+										res.send({error: err});
+										return;
+									}
+									// rows updated
+									res.send({conversation_id:rows[0].id, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
+									console.log({conversation_id:rows[0].id, user_id:req.body.senderid, receiver_id:req.body.receiverid, result:"message successfully sent"});
+								});		
+							});	
+					});	
 				});	
-			});	
+				}
+			
         });
     });
 	
@@ -197,7 +247,7 @@ app.get("/user/message/:userID",(req,res) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
 		console.log(req.params)
-		let query = "SELECT username, message, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
+		let query = "SELECT conversations.id, username, message, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
         connection.query(query, (err, rows) => {
             connection.release(); // return the connection to pool
             if(err) throw err;
