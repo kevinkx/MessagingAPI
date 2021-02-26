@@ -29,7 +29,7 @@ app.get("/users/",(req,res) => {
     });			
 });
 
-app.get("/user/:userId",(req,res) => {
+app.get("/user/:userid",(req,res) => {
     pool.getConnection((err, connection) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
@@ -223,12 +223,12 @@ app.post("/message/send/", (req,res) => {
 	
 });
 
-app.get("/message/:conversationId",(req,res) => {
+app.get("/message/:conversationid",(req,res) => {
     pool.getConnection((err, connection) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
 		console.log(req.params)
-		let query = "SELECT username, message, date from users JOIN messages ON users.id = messages.user_id WHERE conversation_id = "+req.params.conversationId;
+		let query = "SELECT username, message, date from users JOIN messages ON users.id = messages.user_id WHERE conversation_id = "+req.params.conversationid;
         connection.query(query, (err, rows) => {
             connection.release(); // return the connection to pool
             if(err) throw err;
@@ -242,12 +242,12 @@ app.get("/message/:conversationId",(req,res) => {
     });			
 });
 
-app.get("/user/message/:userID",(req,res) => {
+app.get("/user/message/:userid",(req,res) => {
     pool.getConnection((err, connection) => {
         if(err) throw err;
         console.log('connected as id ' + connection.threadId);
 		console.log(req.params)
-		let query = "SELECT conversations.id, username, message, date, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userID;
+		let query = "SELECT conversations.id, username, message, date, unread_count from users JOIN conversation_detail ON users.id = conversation_detail.chat_user_id JOIN conversations ON conversation_detail.conversation_id = conversations.id JOIN messages ON conversations.last_message_id = messages.id WHERE conversation_detail.user_id = "+req.params.userid;
         connection.query(query, (err, rows) => {
             connection.release(); // return the connection to pool
             if(err) throw err;
