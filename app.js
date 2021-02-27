@@ -265,15 +265,15 @@ app.get("/message/detail/:conversationid/:userid",(req,res) => {
 					}else{
 						var result = [];
 						for (i = 0; i < tempResult.length; i++) {
-							var unread = false;
+							var seen = true;
 							if (tempResult.length - i <= rows[0].unread_count){
-								unread = true;
+								seen = false;
 							}
 							let message = {
 							 "username": tempResult[i].username,
 							 "message": tempResult[i].message,
 							 "date": tempResult[i].date,
-							 "unread": unread
+							 "seen": seen
 							}
 							result.push(message);						
 						}
