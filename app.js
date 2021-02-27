@@ -242,6 +242,49 @@ app.get("/message/:conversationid",(req,res) => {
     });			
 });
 
+app.get("/message/detail/:conversationid/:userid",(req,res) => {
+    pool.getConnection((err, connection) => {
+        if(err) throw err;
+        console.log('connected as id ' + connection.threadId);
+		console.log(req.params)
+		let query = "SELECT users.id, username, message, date from users JOIN messages ON users.id = messages.user_id WHERE conversation_id = "+req.params.conversationid;
+        connection.query(query, (err, rows) => {
+            if(err) throw err;
+            console.log('The conversations message are: \n', rows);
+			if(rows.length === 0){
+				res.send({error: 'data not found'});
+			}else{
+				var tempResult = rows;
+				let query = "SELECT unread_count from conversation_detail where user_id = "+req.params.userid+" and conversation_id = "+req.params.conversationid;
+				connection.query(query, (err, rows) => {
+					connection.release(); // return the connection to pool
+					if(err) throw err;
+					console.log('The conversations message are: \n', rows);
+					if(rows.length === 0){
+						res.send({error: 'data not found'});
+					}else{
+						var result = [];
+						for (i = 0; i < tempResult.length; i++) {
+							var unread = false;
+							if (tempResult.length - i <= rows[0].unread_count){
+								unread = true;
+							}
+							let message = {
+							 "username": tempResult[i].username,
+							 "message": tempResult[i].message,
+							 "date": tempResult[i].date,
+							 "unread": unread
+							}
+							result.push(message);						
+						}
+						res.send(result);
+					}
+				});
+			}
+        });
+    });			
+});
+
 app.get("/user/message/:userid",(req,res) => {
     pool.getConnection((err, connection) => {
         if(err) throw err;

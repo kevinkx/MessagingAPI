@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 26, 2021 at 05:59 PM
+-- Generation Time: Feb 27, 2021 at 01:11 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 7.3.27
 
@@ -39,9 +39,10 @@ CREATE TABLE `conversations` (
 --
 
 INSERT INTO `conversations` (`id`, `user_id_1`, `user_id_2`, `last_message_id`) VALUES
-(1, 1, 2, 13),
+(1, 1, 2, 16),
 (3, 2, 5, 14),
-(4, 2, 6, 15);
+(4, 2, 6, 15),
+(5, 6, 5, 25);
 
 -- --------------------------------------------------------
 
@@ -62,12 +63,14 @@ CREATE TABLE `conversation_detail` (
 --
 
 INSERT INTO `conversation_detail` (`id`, `conversation_id`, `user_id`, `chat_user_id`, `unread_count`) VALUES
-(1, 1, 1, 2, 4),
+(1, 1, 1, 2, 1),
 (2, 1, 2, 1, 0),
 (3, 3, 2, 5, 0),
 (4, 3, 5, 2, 0),
 (5, 4, 2, 6, 0),
-(6, 4, 6, 2, 1);
+(6, 4, 6, 2, 1),
+(7, 5, 6, 5, 2),
+(8, 5, 5, 6, 0);
 
 -- --------------------------------------------------------
 
@@ -101,7 +104,17 @@ INSERT INTO `messages` (`id`, `user_id`, `conversation_id`, `message`, `date`) V
 (12, 2, 1, '\"wkwkwk\"', '2021-02-26 16:03:36'),
 (13, 2, 1, '\"wkwkwk\"', '2021-02-26 16:03:36'),
 (14, 2, 3, '\"wkwkwk\"', '2021-02-26 16:17:28'),
-(15, 2, 4, '\"wkwkwk\"', '2021-02-26 16:19:24');
+(15, 2, 4, '\"wkwkwk\"', '2021-02-26 16:19:24'),
+(16, 2, 1, '\"wkwkwk\"', '2021-02-26 17:30:39'),
+(17, 6, 5, '\"wkwkwk\"', '2021-02-26 17:31:17'),
+(18, 6, 5, '\"woiii\"', '2021-02-27 11:25:02'),
+(19, 6, 5, '\"haiiiiii\"', '2021-02-27 11:25:09'),
+(20, 6, 5, '\"haiiiiii\"', '2021-02-27 11:25:10'),
+(21, 6, 5, '\"haiiiiii\"', '2021-02-27 11:25:10'),
+(22, 6, 5, '\"haiiiiii\"', '2021-02-27 11:25:11'),
+(23, 6, 5, '\"haiiiiii\"', '2021-02-27 11:25:12'),
+(24, 5, 5, '\"ada apa bro\"', '2021-02-27 11:58:54'),
+(25, 5, 5, 'kenapa ?', '2021-02-27 12:04:33');
 
 -- --------------------------------------------------------
 
@@ -121,6 +134,7 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`id`, `username`) VALUES
 (1, 'admin'),
 (8, 'budi'),
+(9, 'budi123'),
 (2, 'kevin'),
 (5, 'richard'),
 (6, 'ricky'),
@@ -164,25 +178,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `conversations`
 --
 ALTER TABLE `conversations`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `conversation_detail`
 --
 ALTER TABLE `conversation_detail`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
