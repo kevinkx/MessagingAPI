@@ -125,7 +125,17 @@ app.post("/message/send/", (req, res) => {
     console.log('connected as id ' + connection.threadId);
     //check conversation is new or not.
     let getQuery = 'SELECT id FROM ?? WHERE (?? = ? and ?? = ?) or (?? = ? and ?? = ?)';
-    let query = mysql.format(getQuery, ["conversations", "user_id_1", req.body.senderid, "user_id_2", req.body.receiverid, "user_id_1", req.body.receiverid, "user_id_2", req.body.senderid, ]);
+    let query = mysql.format(
+      getQuery, 
+      ["conversations", 
+      "user_id_1", 
+      req.body.senderid, 
+      "user_id_2", 
+      req.body.receiverid, 
+      "user_id_1", 
+      req.body.receiverid, 
+      "user_id_2", 
+      req.body.senderid]);
     
     connection.query(query, (err, rows) => {
       connection.release(); // return the connection to pool
