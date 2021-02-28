@@ -488,5 +488,5 @@ app.get("/user/message/:userid", (req, res) => {
   });
 });
 
-app.listen(3000);
+module.exports = app.listen(3000);
 console.log('Server started 127.0.0.1:3000');
