@@ -84,7 +84,7 @@ app.post("/user/create/", (req, res) => {
     console.log(response.insertId);
   });
 });
-app.post("/conversation/read/", (req, res) => {
+app.put("/conversation/read/", (req, res) => {
   console.log(req.body)
   let updateQuery = 'UPDATE ?? SET ?? = ? WHERE ?? = ? AND ?? = ?';
   let query = mysql.format(
