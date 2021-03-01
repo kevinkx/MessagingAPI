@@ -174,7 +174,7 @@ describe('API', () => {
   })
   //Send message
   describe("POST /message/send/", () => {
-    it("It should success creating new user", (done) => {
+    it("It should success send message", (done) => {
       chai.request(server)
         .post("/message/send/")
         .set('content-type', 'application/x-www-form-urlencoded')
@@ -196,7 +196,7 @@ describe('API', () => {
   })
   //Send message without param message
   describe("POST /message/send/", () => {
-    it("It should success creating new user", (done) => {
+    it("It should NOT success send message", (done) => {
       chai.request(server)
         .post("/message/send/")
         .set('content-type', 'application/x-www-form-urlencoded')
@@ -214,7 +214,7 @@ describe('API', () => {
   })
   //Send message without param senderid
   describe("POST /message/send/", () => {
-    it("It should success creating new user", (done) => {
+    it("It should NOT success send message", (done) => {
       chai.request(server)
         .post("/message/send/")
         .set('content-type', 'application/x-www-form-urlencoded')
@@ -232,7 +232,7 @@ describe('API', () => {
   })
   //Send message without param receiverid
   describe("POST /message/send/", () => {
-    it("It should success creating new user", (done) => {
+    it("It should NOT success send message", (done) => {
       chai.request(server)
         .post("/message/send/")
         .set('content-type', 'application/x-www-form-urlencoded')
@@ -261,7 +261,7 @@ describe('API', () => {
   })
   //Read message
   describe("PUT /conversation/read/", () => {
-    it("It should success creating new user", (done) => {
+    it("It should success read message", (done) => {
       chai.request(server)
         .put("/conversation/read/")
         .set('content-type', 'application/x-www-form-urlencoded')
